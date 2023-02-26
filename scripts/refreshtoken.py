@@ -1,24 +1,19 @@
 #Get access token
 
-import requests
-import requests.auth
-import pandas as pd
-client_auth = requests.auth.HTTPBasicAuth('52b_-ogrKMs1rpbT0d-TJQ', 'IQF_XzdHCsPHXvWcNqGbD1YCmZurGA')
-post_data = {"grant_type": "password", "username": "Otto_kuosmanen", "password": "reddIt3?"}
-headers = {"User-Agent": "advicedata/0.1 by Otto_kuosmanen"}
-response = requests.post("https://www.reddit.com/api/v1/access_token", auth=client_auth, data=post_data, headers=headers)
-TOKEN = response.json()['access_token']
+import praw
+reddit = praw.Reddit(client_id='52b_-ogrKMs1rpbT0d-TJQ',
+                     client_secret='IQF_XzdHCsPHXvWcNqGbD1YCmZurGA', password='reddIt3?',
+                     user_agent='advicedata/0.1 by Otto_kuosmanen', username='Otto_kuosmanen')
 
-headers['Authorization'] = f'bearer {TOKEN}'
+subreddit = reddit.subreddit('advice')
+hot_advice = subreddit.hot()
 
-#print(requests.get('https://oauth.reddit.com/api/v1/me', headers=headers).json())
+hot_advice = subreddit.hot(limit=1)
+for submission in hot_advice:
+    print(submission.title, 20*"-", submission.selftext)
 
-res = requests.get('https://oauth.reddit.com/r/advice/hot', headers = headers)
-ress = res.json()
-
-#keys: data:children:0-24:data:selftext
-
-for x in range(25):
-    print(ress["data"]["children"][x]["data"]["selftext"]) # here dictionary uses keys and the list inside uses index
-
-#dictionary
+comments = submission.comments
+for comment in comments:
+    if comment.ups > 200:
+        print(20*"-")
+        print(comment.body)

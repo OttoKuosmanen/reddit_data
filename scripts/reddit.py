@@ -1,11 +1,13 @@
 import praw
+import json
 from praw.models import MoreComments
+from datetime import date
 
 reddit = praw.Reddit(client_id='52b_-ogrKMs1rpbT0d-TJQ',
                      client_secret='IQF_XzdHCsPHXvWcNqGbD1YCmZurGA', password='reddIt3?',
                      user_agent='advicedata/0.1 by Otto_kuosmanen', username='Otto_kuosmanen')
 
-
+stamp = date.today()
 
 # INFO
 """Get submissions and comments from a subreddit.
@@ -25,7 +27,7 @@ reddit = praw.Reddit(client_id='52b_-ogrKMs1rpbT0d-TJQ',
 def get_submissions_and_comments(sub, limitter, score_limit):
     submission_list = []
     comment_forest_list = []
-    for submission in reddit.subreddit(sub).new(limit=limitter):
+    for submission in reddit.subreddit(sub).hot(limit=limitter):
         if submission.score > score_limit:
             submission_data = (submission.title + "\n" + submission.selftext,submission.score, submission.id, submission.url)
             submission_list.append(submission_data)
@@ -34,7 +36,7 @@ def get_submissions_and_comments(sub, limitter, score_limit):
     return submission_list, comment_forest_list
 
             
-submission_list, comment_forest_list = get_submissions_and_comments("advice", 1000, 20)
+submission_list, comment_forest_list = get_submissions_and_comments("advice", 1000, 20) # seems to cut off
 
 
 def remove(comment_forest_list):
@@ -71,15 +73,36 @@ def convert_to_dict(compiled_list):
     submissions_dict = {}
     for submission in compiled_list:
         submission_dict = {
-            "advice_question": submission[0],
-            "score": submission[1],
-            "id": submission[2],
-            "url": submission[3],
-            "answer_score": submission[4],
-            "answer": submission[5]
+            "Question": submission[0],
+            "Q_score": submission[1],
+            "Id": submission[2],
+            "Url": submission[3],
+            "A_score": submission[4],
+            "Answer": submission[5]
         }
-        submissions_dict[submission[2]] = submission_dict
+        submissions_dict[submission[3]] = submission_dict
     return submissions_dict
 
 
-dic = convert_to_dict(compiled_list)
+dict_list = convert_to_dict(compiled_list)
+
+"""
+data = {"Posts": []}
+for post in dict_list.values():
+    data["Posts"].append({
+        "Question": post["Question"],
+        "Q_score": post["Q_score"],
+        "Id": post["Id"],
+        "Url": post["Url"],
+        "Aswer": post["Answer"],
+        "A_score": post["A_score"]
+    })
+
+# Write the dictionary data to a JSON file # edit to change name
+with open(f"{stamp}data.json", mode="w") as json_file:
+    json.dump(data, json_file)
+
+"""
+
+# Things to do. Make a loop that runs the reddit collection in, hot, new, rising.
+

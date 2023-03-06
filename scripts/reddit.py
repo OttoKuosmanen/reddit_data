@@ -86,6 +86,7 @@ def convert_to_dict(compiled_list):
 
 dict_list = convert_to_dict(compiled_list)
 
+# json template
 """
 data = {"Posts": []}
 for post in dict_list.values():
@@ -98,7 +99,8 @@ for post in dict_list.values():
         "A_score": post["A_score"]
     })
 
-# Write the dictionary data to a JSON file # edit to change name
+# Write the dictionary data to a JSON file
+
 with open(f"{stamp}data.json", mode="w") as json_file:
     json.dump(data, json_file)
 

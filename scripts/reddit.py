@@ -3,11 +3,14 @@ import json
 from praw.models import MoreComments
 from datetime import date
 
+# initialize access information
 reddit = praw.Reddit(client_id='52b_-ogrKMs1rpbT0d-TJQ',
                      client_secret='IQF_XzdHCsPHXvWcNqGbD1YCmZurGA', password='reddIt3?',
                      user_agent='advicedata/0.1 by Otto_kuosmanen', username='Otto_kuosmanen')
 
-stamp = date.today()
+# initialize date variable
+time_stamp = date.today()
+output_file = f'../data/{time_stamp}data.json'
 
 # INFO
 """Get submissions and comments from a subreddit.
@@ -24,6 +27,7 @@ stamp = date.today()
     Data:
         Comments and submissions are linked by Index
 """
+
 def get_submissions_and_comments(sub, limitter, score_limit):
     submission_list = []
     comment_forest_list = []
@@ -36,16 +40,15 @@ def get_submissions_and_comments(sub, limitter, score_limit):
     return submission_list, comment_forest_list
 
             
-submission_list, comment_forest_list = get_submissions_and_comments("advice", 1000, 20) # seems to cut off
 
 
+# removes replies
 def remove(comment_forest_list):
     for commentforest in comment_forest_list:
         commentforest.replace_more(limit=0)
+        
 
-remove(comment_forest_list)
-
-  
+    
 def get_top_comments(comment_forest_list):
     top_comments = []
     for comment_forest in comment_forest_list:
@@ -57,7 +60,6 @@ def get_top_comments(comment_forest_list):
             top_comments.append((top_comment[0], top_comment[1]))
     return top_comments       
 
-best_comments = get_top_comments(comment_forest_list)
 
 
 def compile_list(submission_list, comment_list):
@@ -65,8 +67,7 @@ def compile_list(submission_list, comment_list):
     for submission, comment in zip(submission_list, comment_list):
         compiled_list.append(submission + comment)
     return compiled_list
-
-compiled_list = compile_list(submission_list,best_comments)        
+     
         
 
 def convert_to_dict(compiled_list):
@@ -84,27 +85,31 @@ def convert_to_dict(compiled_list):
     return submissions_dict
 
 
-dict_list = convert_to_dict(compiled_list)
 
-# json template
-"""
-data = {"Posts": []}
-for post in dict_list.values():
-    data["Posts"].append({
-        "Question": post["Question"],
-        "Q_score": post["Q_score"],
-        "Id": post["Id"],
-        "Url": post["Url"],
-        "Aswer": post["Answer"],
-        "A_score": post["A_score"]
+
+def save(dict_list):                    # There is something funky here.
+    data = {"Posts": []}                # Making the dictionay into a double dict or something.
+    for post in dict_list.values():     # It goes too deep
+        data["Posts"].append({          # But changing it would possibly require changes in json_reader_unique
+            "Question": post["Question"],
+            "Q_score": post["Q_score"],
+            "Id": post["Id"],
+            "Url": post["Url"],
+            "Aswer": post["Answer"],
+            "A_score": post["A_score"]
     })
+       
+    with open(output_file, 'w') as f:
+                json.dump(data, f, indent=4) # by default it will overwrite the last save
+                
 
-# Write the dictionary data to a JSON file
+submission_list, comment_forest_list = get_submissions_and_comments("advice", 1000, 20) # max 1000
+remove(comment_forest_list)
+best_comments = get_top_comments(comment_forest_list)
+compiled_list = compile_list(submission_list,best_comments)
+dict_list = convert_to_dict(compiled_list)
+save(dict_list)
 
-with open(f"{stamp}data.json", mode="w") as json_file:
-    json.dump(data, json_file)
-
-"""
 
 # Things to do. Make a loop that runs the reddit collection in, hot, new, rising.
 

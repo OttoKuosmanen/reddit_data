@@ -4,27 +4,54 @@
 """
 
 import os,json
+from datetime import date
 
-path_to_json = '../data/'
+# initialize date for data outputs
+time_stamp = date.today()
 
+#initiallize path to input and output
+path = '../data/'
+output_file = f'../data/step2/{time_stamp}unique.json'
+
+
+
+# Reads all the json files in folder: set to path variable. Stores the data as output.
 def read():
     out = []
-    for file_name in [file for file in os.listdir(path_to_json) if file.endswith('.json')]:
-        with open(path_to_json + file_name) as json_file:
+    for file_name in [file for file in os.listdir(path) if file.endswith('.json')]:
+        with open(path + file_name) as json_file:
             data = json.load(json_file)
             out.append(data)
     return out
 
-data = read()
-           
-def simplify(data): #combine files so that iteration is easy
-
-
-
-
-def uni(data): # returns only items with unique id's
+#combine files so that iteration is easy           
+def simplify(data):
+    out = []
     for file in data:
+        for dic in file["Posts"]:
+            out.append(dic)
+    return out
+            
         
+# returns only items with unique id's
+def uni(new):
+    out = []
+    id_seen = []
+    for dic in new:
+        if dic["Id"] not in id_seen:
+            id_seen.append(dic["Id"])
+            out.append(dic)
+    return out
+
+#saves file in json format
+def save_file(file):
+    with open(output_file, 'w') as f:
+        json.dump(unique, f, indent=4) # by default it will overwrite the last save
 
 
-def json_final # takes the file and creates a new json file
+#running functions in sequence
+data = read()
+simple_data = simplify(data)
+unique = uni(simple_data)
+save_file(unique)
+

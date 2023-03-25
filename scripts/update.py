@@ -65,7 +65,7 @@ def re_compile(data, score, top_comments, comment_scores, date_time):
         dicti['A_score'] = c_score
         dicti['Aswer'] = comment
         dicti['Q_score'] = score
-        dicti['Date_of_creation'] = date_i
+        dicti['Date_of_creation'] = str(date_i)
 
 
 
@@ -76,7 +76,7 @@ def clean(data):
 
             
     
-def save_file(file):
+def save_file(file):  # there is a problem with storeing dates into json format
     with open(output_file, 'w') as f:
         json.dump(file, f, indent=4) # by default it will overwrite the last save
 

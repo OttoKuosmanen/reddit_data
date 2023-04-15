@@ -2,7 +2,6 @@
 
 import praw
 import json
-from praw.models import MoreComments
 from datetime import date, datetime
 
 # initialize access information

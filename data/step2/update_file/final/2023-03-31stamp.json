@@ -1,0 +1,53 @@
+{
+    "word parameters": {
+        "excluded": [
+            "abuse",
+            "abused",
+            "abusing",
+            "assault",
+            "assaulted",
+            "assaulting",
+            "rape",
+            "raped",
+            "raping",
+            "molest",
+            "molested",
+            "molesting",
+            "suicide",
+            "suicidal",
+            "kill",
+            "killer",
+            "killing",
+            "update",
+            "edit",
+            "UPDATE:",
+            "edit:"
+        ],
+        "minimum length question": "20",
+        "maximum length question": "500",
+        "minimum length answer": "20",
+        "maximum length answer": "400"
+    },
+    "before": {
+        "mean length of answer": "86.89312977099236",
+        "mean length of question": "231.4618320610687",
+        "std question": "181.08324514703017",
+        "std_answer": "77.83994656372927",
+        "longest answer": "804",
+        "longest question": "1219",
+        "shortest answer": "31",
+        "shortest question": "10",
+        "number of items": "262"
+    },
+    "after": {
+        "mean length of answer": "85.29239766081871",
+        "mean length of question": "189.7719298245614",
+        "std question": "112.29498812620304",
+        "std_answer": "64.45005229206608",
+        "longest answer": "393",
+        "longest question": "498",
+        "shortest answer": "31",
+        "shortest question": "20",
+        "number of items": "171"
+    }
+}

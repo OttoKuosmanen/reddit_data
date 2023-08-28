@@ -16,7 +16,7 @@ I ran the reddit.py script for many days in a row. Each day i got many new suita
 After there were many files in the data folder. Some of the posts were identical. I made the json_reader_unique.
 This script reads all the posts in the data folder and creates a new data file with no idetical posts in the data/step2 folder.
 
-Some because time is running during the data collection and some posts change i created the update script. 
+Because time is running during the data collection and some posts change i created the update script. 
 Aditionally in the update script i get the best comment of each posts and set some criteria for inclusion.
 Running the update script reads the unique data file that was created at the time of executing the update script. (Needs to be run on the same day)
 The script outputts another data file into data/step2/update_file folder.

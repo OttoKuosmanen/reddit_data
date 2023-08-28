@@ -28,11 +28,11 @@ exclude = ["abuse","abused", "abusing","assault","assaulted","assaulting",
            "suicide","suicidal","kill","killer","killing","update","edit","UPDATE:","edit:"]
 
 # Specify minimum and maximum lenght of answer and question
-min_question = 20
+min_question = 32
 max_question = 500
-min_answer = 20
+min_answer = 32
 max_answer = 400
-
+score_min = 20
 
 
 
@@ -60,6 +60,15 @@ def extract_answers(data):
     out = []
     for dicti in data:
         out.append(dicti["Aswer"])
+    return out
+
+#Function: makes a list of advice scores
+#Parameter: Pass in the analysis data
+#Returns: A list of advice scores
+def extract_score(data):
+    out = []
+    for dicti in data:
+        out.append(dicti["A_score"])
     return out
 
 #Function: counts how many words are in a list of strings
@@ -110,13 +119,27 @@ def word_minmax(words_length, mini, maxi):
             results.append(n)
     return results
 
+#Function: Checks if a number falls between the mini and maxi parameters
+#Parameter: Pass in a list of numbers
+#Returns: returns the list of numbers but replaces numbers that are larger than maxi or smaller than mini with REMOVE
+def min_score(answer_scores, score_min):
+    results = []
+    for n in answer_scores:
+        if n < score_min:
+            results.append("REMOVE")
+        else:
+            results.append(n)
+    return results
+
+
+
 #Function: Checks the item sequence for any reasons to delete data
 #Parameter: Pass in a all checks of deletion
 #Returns: a list of 0's and 1's (0 = delete, 1 = good to go)
-def check(questions_length_ok, answers_length_ok, sensored_questions):
+def check(questions_length_ok, answers_length_ok, sensored_questions, answer_scores_ok):
     deletion_sequence = []
-    for a, b, c in zip(questions_length_ok, answers_length_ok, sensored_questions):
-        if "REMOVE" in str(a) or "REMOVE" in str(b) or "REMOVE" in str(c):
+    for a, b, c, d in zip(questions_length_ok, answers_length_ok, sensored_questions,answer_scores_ok):
+        if "REMOVE" in str(a) or "REMOVE" in str(b) or "REMOVE" in str(c) or "REMOVE" in str(d):
             deletion_sequence.append(0)
         else:
             deletion_sequence.append(1)
@@ -153,6 +176,7 @@ data = read(relative_location_name)
 # Extracting questions and answers
 questions = extract_questions(data)
 answers_h = extract_answers(data)
+answer_scores = extract_score(data)
 
 # Counting how many words are in answers and questions
 words_answer = count_word(answers_h)
@@ -162,12 +186,16 @@ words_question = count_word(questions)
 add_info(data, words_answer, words_question)
 
 # Checking the mean number of words, standard deviation and number of items
+mean_answer_score = np.mean(answer_scores)
 mean_answer = np.mean(words_answer)
 mean_question = np.mean(words_question)
+std_answer_score = np.std(answer_scores)
 std_answer = np.std(words_answer)
 std_question = np.std(words_question)
+max_answer_score = np.max(answer_scores)
 longest_answer = np.max(words_answer)
 longest_question = np.max(words_question)
+least_answer_score = np.min(answer_scores)
 shortest_answer = np.min(words_answer)
 shortest_question = np.min(words_question)
 number = len(data)   
@@ -176,12 +204,13 @@ number = len(data)
 sensored_questions = sensor(questions,exclude)
 
 
-# Running the lenght analysis
+# Running the lenght analysis and score checking
 questions_lenght_ok = word_minmax(words_question, min_question, max_question)
 answers_lenght_ok = word_minmax(words_answer, min_answer, max_answer)
+answer_scores_ok = min_score(answer_scores, score_min)
 
 # Running the check function to get the cumulative list of items to be deleted
-deletion = check(questions_lenght_ok, answers_lenght_ok, sensored_questions)
+deletion = check(questions_lenght_ok, answers_lenght_ok, sensored_questions, answer_scores_ok)
 
 # Performing deletion
 new = delete(deletion, data)
@@ -193,6 +222,7 @@ new = delete(deletion, data)
 # Extracting questions and answers
 questions_new = extract_questions(new)
 answers_h_new = extract_answers(new)
+answer_scores_new = extract_score(new)
 
 # Counting how many words are in answers and questions
 words_answer = count_word(answers_h_new)
@@ -200,12 +230,16 @@ words_question = count_word(questions_new)
 
 
 # Checking the mean number of words and standard deviation
+mean_answer_score_new = np.mean(answer_scores_new)
 mean_answer_new = np.mean(words_answer)
 mean_question_new = np.mean(words_question)
+std_answer_score_new = np.std(answer_scores_new)
 std_answer_new = np.std(words_answer)
 std_question_new = np.std(words_question)
+max_answer_score_new = np.max(answer_scores_new)
 longest_answer_new = np.max(words_answer)
 longest_question_new = np.max(words_question)
+least_answer_score_new = np.min(answer_scores_new)
 shortest_answer_new = np.min(words_answer)
 shortest_question_new = np.min(words_question)
 number_new = len(new)
@@ -225,10 +259,14 @@ information_wanted = {
     
     'before' : {    'mean length of answer':  str(mean_answer),
                     'mean length of question': str(mean_question),
+                    'mean answer score': str(mean_answer_score),
+                    'std answer score': str(std_answer_score),
                     'std question': str(std_question),
                     'std_answer': str(std_answer),
+                    'max answer score': str(max_answer_score),
                     'longest answer': str(longest_answer),
                     'longest question': str(longest_question),
+                    'min answer score': str(least_answer_score),
                     'shortest answer': str(shortest_answer),
                     'shortest question': str(shortest_question),
                     'number of items': str(number)
@@ -236,10 +274,14 @@ information_wanted = {
                          
     'after': {      'mean length of answer': str(mean_answer_new),
                     'mean length of question': str(mean_question_new),
+                    'mean answer score': str(mean_answer_score_new),
+                    'std answer score': str(std_answer_score_new),
                     'std question': str(std_question_new),
                     'std_answer': str(std_answer_new),
+                    'max answer score': str(max_answer_score_new),
                     'longest answer': str(longest_answer_new),
                     'longest question': str(longest_question_new),
+                    'min answer score': str(least_answer_score_new),
                     'shortest answer': str(shortest_answer_new),
                     'shortest question': str(shortest_question_new),
                     'number of items':str(number_new)

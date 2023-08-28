@@ -3,7 +3,7 @@ import json
 from praw.models import MoreComments
 from datetime import date
 
-# initialize access information
+# initialize access information :: Change to use keyring before publishing
 reddit = praw.Reddit(client_id='52b_-ogrKMs1rpbT0d-TJQ',
                      client_secret='IQF_XzdHCsPHXvWcNqGbD1YCmZurGA', password='reddIt3?',
                      user_agent='advicedata/0.1 by Otto_kuosmanen', username='Otto_kuosmanen')
@@ -42,7 +42,7 @@ def get_submissions_and_comments(sub, limitter, score_limit):
             
 
 
-# removes replies
+# removes replies to answers
 def remove(comment_forest_list):
     for commentforest in comment_forest_list:
         commentforest.replace_more(limit=0)
@@ -103,7 +103,7 @@ def save(dict_list):                    # There is something funky here.
                 json.dump(data, f, indent=4) # by default it will overwrite the last save
                 
 
-submission_list, comment_forest_list = get_submissions_and_comments("advice", 1000, 20) # max 1000
+submission_list, comment_forest_list = get_submissions_and_comments("advice", 1000, 20) # max 1000, set by the API or PRAW
 remove(comment_forest_list)
 best_comments = get_top_comments(comment_forest_list)
 compiled_list = compile_list(submission_list,best_comments)

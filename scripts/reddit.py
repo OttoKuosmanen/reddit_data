@@ -2,11 +2,14 @@ import praw
 import json
 from praw.models import MoreComments
 from datetime import date
+import sys
+sys.path.append('../KEY')
+from key import client_id, client_secret, password, user_agent, username
 
-# initialize access information :: Change to use keyring before publishing
-reddit = praw.Reddit(client_id='52b_-ogrKMs1rpbT0d-TJQ',
-                     client_secret='IQF_XzdHCsPHXvWcNqGbD1YCmZurGA', password='reddIt3?',
-                     user_agent='advicedata/0.1 by Otto_kuosmanen', username='Otto_kuosmanen')
+# Getting access to reddit
+reddit = praw.Reddit(client_id = client_id,
+                     client_secret = client_secret, password = password,
+                     user_agent = user_agent, username = username)
 
 # initialize date variable
 time_stamp = date.today()
@@ -111,5 +114,5 @@ dict_list = convert_to_dict(compiled_list)
 save(dict_list)
 
 
-# Things to do. Make a loop that runs the reddit collection in, hot, new, rising.
+# Things that could be improved. Make a loop that runs the reddit collection in, hot, new, rising. This could result in faster data collection.
 

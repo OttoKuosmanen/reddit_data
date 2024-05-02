@@ -3,11 +3,14 @@
 import praw
 import json
 from datetime import date, datetime
+import sys
+sys.path.append('../KEY')
+from key import client_id, client_secret, password, user_agent, username
 
-# initialize access information
-reddit = praw.Reddit(client_id='52b_-ogrKMs1rpbT0d-TJQ',
-                     client_secret='IQF_XzdHCsPHXvWcNqGbD1YCmZurGA', password='reddIt3?',
-                     user_agent='advicedata/0.1 by Otto_kuosmanen', username='Otto_kuosmanen')
+# Getting access to reddit
+reddit = praw.Reddit(client_id = client_id,
+                     client_secret = client_secret, password = password,
+                     user_agent = user_agent, username = username)
 
 # initialize date variable
 time_stamp = date.today()
